@@ -1,15 +1,15 @@
 import streamlit as st
 import joblib
 
-sex_d = {0: 'Kobieta', 1: 'Mężczyzna'}
-pclass_d = {0: 'Pierwsza', 1: 'Druga', 2: 'Trzecia'}
+sex_d = {0: 'Female', 1: 'Male'}
+pclass_d = {0: 'First', 1: 'Second', 2: 'Third'}
 embarked_d = {0: 'Cherbourg', 1: 'Queenstown', 2: 'Southampton'}
 
 filename = "model"
 model = model = joblib.load(filename)
 
 def main():
-    st.set_page_config(page_title='Czy przeżyłbyś katastrofę?')
+    st.set_page_config(page_title='Would You Survive a Disaster?')
     overview = st.container()
     left, right = st.columns(2)
     prediction = st.container()
@@ -18,18 +18,18 @@ def main():
     
 
     with overview:
-        st.title('Czy przeżyłbyś katastrofę?')
+        st.title('Would You Survive a Disaster?')
 
     with left:
-        sex_ratio = st.radio('Płeć', list(sex_d.keys()), format_func= lambda x: sex_d[x])
-        pclass_ratio = st.radio('Klasa', list(pclass_d.keys()), format_func = lambda x: pclass_d[x])
+        sex_ratio = st.radio('Gender', list(sex_d.keys()), format_func= lambda x: sex_d[x])
+        pclass_ratio = st.radio('Class', list(pclass_d.keys()), format_func = lambda x: pclass_d[x])
         embarked_ratio = st.radio('Port', list(embarked_d.keys()), index=2, format_func = lambda x: embarked_d[x])
 
     with right:
-        age_slider = st.slider('Wiek', value=50, min_value=1, max_value=100)
-        sibsp_slider = st.slider('# Liczba rodzeństwa i/lub partnera', min_value=0, max_value=8)
-        parch_slider = st.slider('# Liczba rodziców i/lub dzieci', min_value=0, max_value=6)
-        fare_slider = st.slider('Cena biletu', min_value=0, max_value=500, step=10)
+        age_slider = st.slider('Age', value=50, min_value=1, max_value=100)
+        sibsp_slider = st.slider('# Siblings/Spouse', min_value=0, max_value=8)
+        parch_slider = st.slider('# Parents/Children', min_value=0, max_value=6)
+        fare_slider = st.slider('Ticket Fare', min_value=0, max_value=500, step=10)
 
     data = {
         'Pclass': pclass_ratio,
@@ -47,13 +47,13 @@ def main():
     s_confidence = model.predict_proba(data_for_prediction)[0]  
 
     with prediction:
-        st.header('Czy dana osoba przeżyje?')
+        st.header('Would the Person Survive?')
         if survival == 1:
-            st.success('Tak')
+            st.success('Yes')
         else:
-            st.error('Nie')
+            st.error('No')
 
-        st.subheader("Pewność predykcji {0:.2f} %".format(s_confidence[survival] * 100))
+        st.subheader("Prediction Confidence: {0:.2f}%".format(s_confidence[survival] * 100))
 
 if __name__ == '__main__':
     main()
